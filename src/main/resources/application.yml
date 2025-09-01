@@ -23,11 +23,6 @@ spring:
           uri: ${BACKEND_URL:https://language-learning-backend-production-3ce3.up.railway.app}
           predicates:
             - Path=/api/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                rate-limiter: "default"
-                key-resolver: "#{@userKeyResolver}"
 
         # Health check endpoint
         - id: health-check

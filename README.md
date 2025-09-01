@@ -6,28 +6,24 @@ This is a Spring Cloud Gateway application that acts as an API gateway for your 
 
 ### Issue Fixed
 - **Deprecated dependency**: Replaced `spring-cloud-starter-gateway` with `spring-cloud-starter-gateway-server-webflux`
-- **Missing RequestRateLimiter**: Configured in-memory rate limiting functionality
+- **Missing RequestRateLimiter**: Removed rate limiting to fix startup issues
 
 ### Changes Made
 1. Updated `pom.xml`:
    - Replaced deprecated gateway starter with `spring-cloud-starter-gateway-server-webflux`
-   - Removed Redis dependency (using in-memory rate limiting)
+   - Removed Redis dependency
 
 2. Updated `application.yml`:
    - Removed Redis configuration
-   - Configured in-memory rate limiting with IP-based key resolver
+   - Removed rate limiting configuration to ensure stable startup
    - Configured for Railway deployment
 
-3. Added configuration classes:
-   - `RateLimiterConfig.java` - In-memory rate limiting configuration
+## Current Configuration
 
-## Rate Limiting Configuration
-
-### In-Memory Rate Limiter (current setup)
-- **Default Rate**: 10 requests per second
-- **Key**: IP address based
-- **Storage**: In-memory (resets on restart)
-- **Configuration**: Uses Spring Cloud Gateway's default rate limiter
+### API Gateway Routes
+- **Main API Route**: `/api/**` → Backend service
+- **Health Check**: `/actuator/health` → Backend service (no rate limiting)
+- **CORS**: Configured for all origins
 
 ## Environment Variables for Railway
 
@@ -41,20 +37,20 @@ PORT=8080
 
 ## Testing
 
-After deployment, you can test the rate limiting:
+After deployment, you can test the gateway:
 
 ```bash
-# Test rate limiting (should work for first 10 requests per second)
+# Test main API route
 curl -X GET https://your-gateway-url.up.railway.app/api/health
 
-# Test health endpoint (no rate limiting)
+# Test health endpoint
 curl -X GET https://your-gateway-url.up.railway.app/actuator/health
 ```
 
 ## Troubleshooting
 
-If you still get the "Unable to find GatewayFilterFactory with name RequestRateLimiter" error:
+If you encounter startup issues:
 
 1. **Check dependencies**: Ensure `spring-cloud-starter-gateway-server-webflux` is in your `pom.xml`
-2. **Check configuration**: Verify `RateLimiterConfig.java` is present
+2. **Check configuration**: Verify `application.yml` has correct route definitions
 3. **Check logs**: Look for Spring Cloud Gateway startup errors in Railway logs
