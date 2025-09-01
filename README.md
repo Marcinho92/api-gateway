@@ -23,7 +23,7 @@ This is a Spring Cloud Gateway application that acts as an API gateway for your 
 ### API Gateway Routes
 - **Main API Route**: `/api/**` → Backend service
 - **Health Check**: `/actuator/health` → Backend service (no rate limiting)
-- **CORS**: Configured for all origins
+- **CORS**: Configured for specific origins with duplicate header removal
 
 ## Environment Variables for Railway
 

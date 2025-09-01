@@ -6,7 +6,10 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: "*"
+            allowedOrigins: 
+              - "https://www.langlearn.top"
+              - "http://localhost:3000"
+              - "http://localhost:8080"
             allowedMethods:
               - GET
               - POST
