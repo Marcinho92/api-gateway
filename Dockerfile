@@ -1,21 +1,17 @@
-# Użyj obrazu Maven z Java 21 do buildowania
-FROM eclipse-temurin:21-jdk as build
+# Użyj obrazu z Maven i Java 21
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Skopiuj pliki Maven
-COPY mvnw .
-COPY .mvn .mvn
+# Skopiuj pom.xml i pobierz dependencies
 COPY pom.xml .
-
-# Pobranie zależności (cache layer)
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Skopiuj kod źródłowy
 COPY src src
 
 # Zbuduj aplikację
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Drugi stage - środowisko runtime
 FROM eclipse-temurin:21-jre
@@ -24,10 +20,6 @@ WORKDIR /app
 
 # Skopiuj JAR z build stage
 COPY --from=build /app/target/*.jar app.jar
-
-# Stwórz użytkownika (bezpieczeństwo)
-RUN useradd --create-home --shell /bin/bash runtime
-USER runtime
 
 # Port dla Railway
 ARG PORT=8080
