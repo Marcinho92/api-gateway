@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        # Route do Twojego backendu
+        - id: language-learning-backend
+          uri: ${BACKEND_URL:https://language-learning-backend-production-3ce3.up.railway.app}
+          predicates:
+            - Path=/api/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter:
+                  replenish-rate: 10
+                  burst-capacity: 20
+
+        # Health check endpoint
+        - id: health-check
+          uri: ${BACKEND_URL:https://language-learning-backend-production-3ce3.up.railway.app}
+          predicates:
+            - Path=/actuator/health
+          filters:
+            - StripPrefix=0
+
+server:
+  port: ${PORT:8080}
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    reactor.netty.http.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
