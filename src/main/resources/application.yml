@@ -3,6 +3,17 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 45000
+        response-timeout: 60000
+        pool:
+          max-connections: 100
+          max-idle-time: 30s
+          max-life-time: 60s
+        compression: true
+        wiretap: true  # Debugowanie
+        keep-alive: true  # HTTP Keep-Alive
+        tcp-no-delay: true  # Wyłącz Nagle's algorithm
       globalcors:
         cors-configurations:
           '[/**]':
