@@ -1,6 +1,10 @@
 spring:
   application:
     name: api-gateway
+  cache:
+    type: simple
+    cache-names:
+      - gateway-cache
   cloud:
     gateway:
       httpclient:
