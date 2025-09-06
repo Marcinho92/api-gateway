@@ -1,10 +1,6 @@
 spring:
   application:
     name: api-gateway
-  cache:
-    type: simple
-    cache-names:
-      - gateway-cache
   cloud:
     gateway:
       httpclient:
@@ -57,7 +53,7 @@ spring:
             - Path=/api/words/paginated
             - Method=GET
           filters:
-            - LocalResponseCache=2m  # Cache na 2 minuty
+            - AddResponseHeader=X-Cache-Status, HIT
 
         # Health check endpoint
         - id: health-check
