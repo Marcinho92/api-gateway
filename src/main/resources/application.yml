@@ -37,15 +37,6 @@ spring:
           predicates:
             - Path=/api/**
 
-        # Cached paginated words endpoint
-        - id: paginated-cached
-          uri: ${BACKEND_URL:https://language-learning-backend-production-3ce3.up.railway.app}
-          predicates:
-            - Path=/api/words/paginated
-            - Method=GET
-          filters:
-            - AddResponseHeader=X-Cache-Status, HIT
-
         # Health check endpoint
         - id: health-check
           uri: ${BACKEND_URL:https://language-learning-backend-production-3ce3.up.railway.app}
@@ -56,13 +47,6 @@ spring:
 
 server:
   port: ${PORT:8080}
-  netty:
-    connection-timeout: 30000
-    h2c-max-content-length: 1048576  # 1MB
-    initial-buffer-size: 128
-    max-chunk-size: 8192
-    max-initial-line-length: 4096
-    validate-headers: false
 
 # Logging
 logging:
