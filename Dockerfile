@@ -1,29 +1,26 @@
-# Użyj obrazu z Maven i Java 21
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+# Użyj oficjalnego obrazu OpenJDK 21
+FROM openjdk:21-jdk-slim
 
+# Ustaw katalog roboczy
 WORKDIR /app
 
-# Skopiuj pom.xml i pobierz dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Skopiuj pliki Maven Wrapper
+COPY mvnw ./
+COPY .mvn .mvn
+COPY pom.xml ./
+
+# Dodaj uprawnienia do mvnw
+RUN chmod +x mvnw
+
+# Pobranie zależności (cache layer)
+RUN ./mvnw dependency:go-offline -B
 
 # Skopiuj kod źródłowy
-COPY src src
+COPY src ./src
 
 # Zbuduj aplikację
-RUN mvn clean package -DskipTests
-
-# Drugi stage - środowisko runtime
-FROM eclipse-temurin:21-jre
-
-WORKDIR /app
-
-# Skopiuj JAR z build stage
-COPY --from=build /app/target/*.jar app.jar
-
-# Port dla Railway
-ARG PORT=8080
-ENV PORT=${PORT}
+RUN ./mvnw clean package -DskipTests
 
 # Uruchom aplikację
-ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
+EXPOSE 8080
+CMD ["java", "-jar", "target/api-gateway-0.0.1-SNAPSHOT.jar"]
