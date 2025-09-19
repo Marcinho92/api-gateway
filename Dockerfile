@@ -1,5 +1,5 @@
-# Użyj oficjalnego obrazu Maven z OpenJDK 21
-FROM maven:3.9.6-openjdk-21
+# Użyj oficjalnego obrazu Maven z OpenJDK 17
+FROM maven:3.9.6-openjdk-17
 
 # Ustaw katalog roboczy
 WORKDIR /app
