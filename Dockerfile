@@ -1,25 +1,18 @@
-# Użyj oficjalnego obrazu OpenJDK 21
-FROM openjdk:21-jdk-slim
+# Użyj oficjalnego obrazu Maven z OpenJDK 21
+FROM maven:3.9.6-openjdk-21-slim
 
 # Ustaw katalog roboczy
 WORKDIR /app
 
-# Skopiuj pliki Maven Wrapper
-COPY mvnw ./
-COPY .mvn .mvn
+# Skopiuj pliki projektu
 COPY pom.xml ./
-
-# Dodaj uprawnienia do mvnw
-RUN chmod +x mvnw
-
-# Pobranie zależności (cache layer)
-RUN ./mvnw dependency:go-offline -B
-
-# Skopiuj kod źródłowy
 COPY src ./src
 
+# Pobranie zależności (cache layer)
+RUN mvn dependency:go-offline -B
+
 # Zbuduj aplikację
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Uruchom aplikację
 EXPOSE 8080
